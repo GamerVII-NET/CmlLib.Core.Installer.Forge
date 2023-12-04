@@ -21,9 +21,13 @@ public class MForge
 
     public MForge(CMLauncher launcher)
     {
+        
+        var clientHandler = new HttpClientHandler();
+        clientHandler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+        
         _launcher = launcher;
         _installerMapper = new ForgeInstallerVersionMapper();
-        _versionLoader = new ForgeVersionLoader(new HttpClient());
+        _versionLoader = new ForgeVersionLoader(new HttpClient(clientHandler));
     }
 
     private ForgeInstallOptions createDefaultOptions()
