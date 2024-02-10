@@ -42,12 +42,27 @@ public class MForge
         ForgeInstallOptions options,
         bool forceUpdate = false)
     {
-        var versions = await _versionLoader.GetForgeVersions(mcVersion);
-        var bestVersion =
-            versions.FirstOrDefault(v => v.IsRecommendedVersion) ??
-            versions.FirstOrDefault(v => v.IsLatestVersion) ??
-            versions.FirstOrDefault() ??
-            throw new InvalidOperationException("Cannot find any version");
+        var minecraftVersion = mcVersion;
+        if (mcVersion.Contains("-"))
+        {
+            minecraftVersion = mcVersion.Split("-").First();
+        }
+        var versions = await _versionLoader.GetForgeVersions(minecraftVersion);
+
+        ForgeVersion bestVersion = null;
+        if (mcVersion.Contains("-"))
+        {
+            bestVersion = versions.First(c => c.ForgeVersionName == mcVersion.Split("-forge-").Last());
+        }
+        else
+        {
+
+            bestVersion =
+                versions.FirstOrDefault(v => v.IsRecommendedVersion) ??
+                versions.FirstOrDefault(v => v.IsLatestVersion) ??
+                versions.FirstOrDefault() ??
+                throw new InvalidOperationException("Cannot find any version");
+        }
 
         return await Install(bestVersion, options, forceUpdate);
     }
@@ -64,7 +79,7 @@ public class MForge
         var versions = await _versionLoader.GetForgeVersions(mcVersion);
 
         var foundVersion = versions.FirstOrDefault(v => v.ForgeVersionName == forgeVersion) ??
-            throw new InvalidOperationException("Cannot find version name " + forgeVersion);
+                           throw new InvalidOperationException("Cannot find version name " + forgeVersion);
         return await Install(foundVersion, options, forceUpdate);
     }
 
