@@ -143,20 +143,23 @@ public abstract class ForgeInstaller : IForgeInstaller
         if (processors == null || processors.Count == 0)
             return;
 
-        for (int i = 0; i < processors.Count; i++)
+        var tasks = processors.Cast<JObject>().Select(async (item, i) =>
         {
-            var item = processors[i];
             _fileProgress.Report(new DownloadFileChangedEventArgs(
                 MFile.Others, this, item["jar"]?.ToString() ?? "", processors.Count, i));
 
             var outputs = item["outputs"] as JObject;
-            if (outputs == null || !checkProcessorOutputs(outputs, mapData))
-            {
-                var sides = item["sides"] as JArray;
-                if (sides == null || sides.FirstOrDefault()?.ToString() == "client") //skip server side
-                    await startProcessor(item, mapData);
-            }
-        }
+            if (outputs != null && checkProcessorOutputs(outputs, mapData))
+                return;
+
+            var sides = item["sides"] as JArray;
+            if (sides != null && sides.FirstOrDefault()?.ToString() != "client") //skip server side
+                return;
+
+            await startProcessor(item, mapData);
+        });
+
+        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
     private bool checkProcessorOutputs(JObject outputs, Dictionary<string, string?> mapData)

@@ -44,6 +44,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\CmlLib.Core\CmlLib\CmlLib.csproj" />
+      <ProjectReference Include="..\..\CmlLib.ExtendedCore\CmlLib\CmlLib.csproj" />
     </ItemGroup>
 </Project>
