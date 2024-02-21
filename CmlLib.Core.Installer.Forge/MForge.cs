@@ -1,8 +1,7 @@
-﻿using CmlLib.Core.Downloader;
+﻿using System.ComponentModel;
+using CmlLib.Core.Downloader;
 using CmlLib.Core.Installer.Forge.Versions;
 using CmlLib.Core.Version;
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace CmlLib.Core.Installer.Forge;
 
@@ -11,13 +10,10 @@ public class MForge
     public static readonly string ForgeAdUrl =
         "https://adfoc.us/serve/sitelinks/?id=271228&url=https://maven.minecraftforge.net/";
 
-    private readonly CMLauncher _launcher;
     private readonly IForgeInstallerVersionMapper _installerMapper;
-    private readonly ForgeVersionLoader _versionLoader;
 
-    public event DownloadFileChangedHandler? FileChanged;
-    public event EventHandler<ProgressChangedEventArgs>? ProgressChanged;
-    public event EventHandler<string>? InstallerOutput;
+    private readonly CMLauncher _launcher;
+    private readonly ForgeVersionLoader _versionLoader;
 
     public MForge(CMLauncher launcher)
     {
@@ -25,6 +21,10 @@ public class MForge
         _installerMapper = new ForgeInstallerVersionMapper();
         _versionLoader = new ForgeVersionLoader(new HttpClient());
     }
+
+    public event DownloadFileChangedHandler? FileChanged;
+    public event EventHandler<ProgressChangedEventArgs>? ProgressChanged;
+    public event EventHandler<string>? InstallerOutput;
 
     private ForgeInstallOptions createDefaultOptions()
     {
@@ -34,8 +34,10 @@ public class MForge
         };
     }
 
-    public Task<string> Install(string mcVersion, bool forceUpdate = false) =>
-        Install(mcVersion, createDefaultOptions(), forceUpdate);
+    public Task<string> Install(string mcVersion, bool forceUpdate = false)
+    {
+        return Install(mcVersion, createDefaultOptions(), forceUpdate);
+    }
 
     public async Task<string> Install(
         string mcVersion,
@@ -43,32 +45,26 @@ public class MForge
         bool forceUpdate = false)
     {
         var minecraftVersion = mcVersion;
-        if (mcVersion.Contains("-"))
-        {
-            minecraftVersion = mcVersion.Split("-").First();
-        }
+        if (mcVersion.Contains("-")) minecraftVersion = mcVersion.Split("-").First();
         var versions = await _versionLoader.GetForgeVersions(minecraftVersion);
 
         ForgeVersion bestVersion = null;
         if (mcVersion.Contains("-"))
-        {
             bestVersion = versions.First(c => c.ForgeVersionName == mcVersion.Split("-forge-").Last());
-        }
         else
-        {
-
             bestVersion =
                 versions.FirstOrDefault(v => v.IsRecommendedVersion) ??
                 versions.FirstOrDefault(v => v.IsLatestVersion) ??
                 versions.FirstOrDefault() ??
                 throw new InvalidOperationException("Cannot find any version");
-        }
 
         return await Install(bestVersion, options, forceUpdate);
     }
 
-    public Task<string> Install(string mcVersion, string forgeVersion, bool forceUpdate = false) =>
-        Install(mcVersion, forgeVersion, createDefaultOptions(), forceUpdate);
+    public Task<string> Install(string mcVersion, string forgeVersion, bool forceUpdate = false)
+    {
+        return Install(mcVersion, forgeVersion, createDefaultOptions(), forceUpdate);
+    }
 
     public async Task<string> Install(
         string mcVersion,

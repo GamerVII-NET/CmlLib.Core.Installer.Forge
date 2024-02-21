@@ -1,6 +1,6 @@
+using System.ComponentModel;
 using CmlLib.Core.Downloader;
 using CmlLib.Core.Installer.Forge.Versions;
-using System.ComponentModel;
 
 namespace CmlLib.Core.Installer.Forge;
 

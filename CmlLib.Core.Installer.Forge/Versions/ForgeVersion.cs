@@ -4,8 +4,8 @@ public class ForgeVersion
 {
     public ForgeVersion(string mcVersion, string forgeVersion)
     {
-        this.MinecraftVersionName = mcVersion;
-        this.ForgeVersionName = forgeVersion;
+        MinecraftVersionName = mcVersion;
+        ForgeVersionName = forgeVersion;
     }
 
     public string MinecraftVersionName { get; }

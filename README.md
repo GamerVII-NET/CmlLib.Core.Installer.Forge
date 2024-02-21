@@ -1,25 +1,30 @@
 # CmlLib.Core.Installer.Forge
 
 ## Minecraft Forge Installer
+
 <img src='https://raw.githubusercontent.com/CmlLib/CmlLib.Core/master/icon.png' width=128>
 
 Forge Installer for [CmlLib.Core](https://github.com/CmlLib/CmlLib.Core)
 
-## Features 
-* Forge Developer Support! After successfully installing the Forge version, the Forge advertising page will automatically open for you.
+## Features
+
+* Forge Developer Support! After successfully installing the Forge version, the Forge advertising page will
+  automatically open for you.
 * Automatic change of links to install Forge
 * Automatic installation of the Vanilla version of Minecraft before installing Forge
 * Skipping the Forge re-installation
 
 ## Supported Forge Versions
 
-**1.7.10 ~ 1.20.1** forge versions was successfully tested. [All test results](https://alphabs.gitbook.io/cmllib/installer.forge/supported-versions)
+**1.7.10 ~ 1.20.1** forge versions was successfully
+tested. [All test results](https://alphabs.gitbook.io/cmllib/installer.forge/supported-versions)
 
 ## Install
 
 Install the [CmlLib.Core.Installer.Forge Nuget package](https://www.nuget.org/packages/CmlLib.Core.Installer.Forge)
 
-or download the nupkg in [Releases](https://github.com/CmlLib/CmlLib.Core.Installer.Forge/releases) and add references to them in your project.
+or download the nupkg in [Releases](https://github.com/CmlLib/CmlLib.Core.Installer.Forge/releases) and add references
+to them in your project.
 
 ## [Documentation](https://alphabs.gitbook.io/cmllib/installer.forge/home)
 

@@ -1,32 +1,21 @@
-﻿using CmlLib.Core.Downloader;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using CmlLib.Core.Downloader;
 using CmlLib.Core.Files;
 using CmlLib.Core.Installer.Forge.Versions;
 using CmlLib.Utils;
 using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json.Linq;
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace CmlLib.Core.Installer.Forge.Installers;
 
 public abstract class ForgeInstaller : IForgeInstaller
 {
-    public string VersionName { get; }
-    public ForgeVersion ForgeVersion { get; }
-    public event DownloadFileChangedHandler? FileChanged;
-    public event EventHandler<ProgressChangedEventArgs>? ProgressChanged;
-    public event EventHandler<string>? InstallerOutput;
+    private readonly IProgress<ProgressChangedEventArgs> _bytesPrgress;
 
     private readonly IProgress<DownloadFileChangedEventArgs> _fileProgress;
-    private readonly IProgress<ProgressChangedEventArgs> _bytesPrgress;
-    private readonly FastZip _zip = new FastZip();
+    private readonly FastZip _zip = new();
     private ForgeInstallOptions? _options;
-
-    protected ForgeInstallOptions InstallOptions
-    {
-        get => _options ?? throw new InvalidOperationException();
-        set => _options = value;
-    }
 
     public ForgeInstaller(string versionName, ForgeVersion forgeVersion)
     {
@@ -35,6 +24,18 @@ public abstract class ForgeInstaller : IForgeInstaller
         _fileProgress = new Progress<DownloadFileChangedEventArgs>(e => FileChanged?.Invoke(e));
         _bytesPrgress = new Progress<ProgressChangedEventArgs>(e => ProgressChanged?.Invoke(this, e));
     }
+
+    protected ForgeInstallOptions InstallOptions
+    {
+        get => _options ?? throw new InvalidOperationException();
+        set => _options = value;
+    }
+
+    public string VersionName { get; }
+    public ForgeVersion ForgeVersion { get; }
+    public event DownloadFileChangedHandler? FileChanged;
+    public event EventHandler<ProgressChangedEventArgs>? ProgressChanged;
+    public event EventHandler<string>? InstallerOutput;
 
     public async Task Install(ForgeInstallOptions options)
     {
@@ -106,7 +107,7 @@ public abstract class ForgeInstaller : IForgeInstaller
         Dictionary<string, string?>? mapData = null;
         if (installerData != null)
             mapData = MapProcessorData(installerData, "client", vanillaJarPath, installerDir);
-        await StartProcessors(installProfile["processors"] as JArray, mapData ?? new());
+        await StartProcessors(installProfile["processors"] as JArray, mapData ?? new Dictionary<string, string>());
     }
 
     protected Dictionary<string, string?> MapProcessorData(
@@ -128,7 +129,9 @@ public abstract class ForgeInstaller : IForgeInstaller
                 dataMapping.Add(key, Path.Combine(installDir, value));
             }
             else
+            {
                 dataMapping.Add(key, fullPath);
+            }
         }
 
         dataMapping.Add("SIDE", "client");
@@ -202,7 +205,6 @@ public abstract class ForgeInstaller : IForgeInstaller
         var classpathObj = processor["classpath"];
         var classpath = new List<string>();
         if (classpathObj != null)
-        {
             foreach (var libName in classpathObj)
             {
                 var libNameString = libName?.ToString();
@@ -213,7 +215,6 @@ public abstract class ForgeInstaller : IForgeInstaller
                     PackageName.Parse(libNameString).GetPath());
                 classpath.Add(lib);
             }
-        }
 
         classpath.Add(jarPath);
 
@@ -242,13 +243,14 @@ public abstract class ForgeInstaller : IForgeInstaller
             arg += " " + string.Join(" ", args);
 
         var process = new Process();
-        process.StartInfo = new ProcessStartInfo()
+        process.StartInfo = new ProcessStartInfo
         {
             FileName = InstallOptions.JavaPath,
-            Arguments = arg,
+            Arguments = arg
         };
 
-        Debug.WriteLine(process.StartInfo.Arguments.Replace("C:\\Users\\aa.terentiev\\AppData\\Roaming\\.minecraft", "\n{localPath}"));
+        Debug.WriteLine(process.StartInfo.Arguments.Replace("C:\\Users\\aa.terentiev\\AppData\\Roaming\\.minecraft",
+            "\n{localPath}"));
 
         var p = new ProcessUtil(process);
         p.OutputReceived += (s, e) =>

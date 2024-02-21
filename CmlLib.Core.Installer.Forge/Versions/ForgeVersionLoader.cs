@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using System;
 
 namespace CmlLib.Core.Installer.Forge.Versions;
 
@@ -14,7 +13,8 @@ public class ForgeVersionLoader
 
     public async Task<IEnumerable<ForgeVersion>> GetForgeVersions(string mcVersion)
     {
-        var html = await _httpClient.GetStringAsync($"https://files.minecraftforge.net/net/minecraftforge/forge/index_{mcVersion}.html");
+        var html = await _httpClient.GetStringAsync(
+            $"https://files.minecraftforge.net/net/minecraftforge/forge/index_{mcVersion}.html");
         return findForgeVersionsInHtml(html, mcVersion);
     }
 
@@ -43,6 +43,7 @@ public class ForgeVersionLoader
                 forgeVersion = td.InnerText.Trim().Split(' ')[0].Replace("\n", "").Replace("\r", "");
                 versionNode = td;
             }
+
             if (td.HasClass("download-time"))
                 time = td.InnerText.Trim();
             if (td.HasClass("download-files"))

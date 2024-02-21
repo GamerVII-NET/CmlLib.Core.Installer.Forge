@@ -2,11 +2,12 @@
 
 public class UnsupportedForgeVersionException : Exception
 {
-    public UnsupportedForgeVersionException() : base() { }
+    public UnsupportedForgeVersionException()
+    {
+    }
 
-    public UnsupportedForgeVersionException(string versionName) : 
+    public UnsupportedForgeVersionException(string versionName) :
         base($"The installer does not support this forge version: {versionName}")
     {
-
     }
 }
