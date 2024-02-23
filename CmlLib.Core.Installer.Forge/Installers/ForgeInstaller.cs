@@ -245,11 +245,8 @@ public abstract class ForgeInstaller : IForgeInstaller
             Arguments = arg,
         };
 
-        Debug.WriteLine(process.StartInfo.Arguments.Replace("C:\\Users\\aa.terentiev\\AppData\\Roaming\\.minecraft", "\n{localPath}"));
-
         var p = new ProcessUtil(process);
-        p.OutputReceived += (s, e) =>
-            InstallerOutput?.Invoke(this, e);
+        p.OutputReceived += (s, e) => InstallerOutput?.Invoke(this, e);
         p.StartWithEvents();
         await p.WaitForExitTaskAsync();
     }

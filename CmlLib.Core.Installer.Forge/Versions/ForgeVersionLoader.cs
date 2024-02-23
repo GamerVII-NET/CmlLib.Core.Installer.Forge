@@ -14,7 +14,10 @@ public class ForgeVersionLoader
 
     public async Task<IEnumerable<ForgeVersion>> GetForgeVersions(string mcVersion)
     {
+        mcVersion = mcVersion.Split("-").FirstOrDefault() ?? mcVersion;
+
         var html = await _httpClient.GetStringAsync($"https://files.minecraftforge.net/net/minecraftforge/forge/index_{mcVersion}.html");
+
         return findForgeVersionsInHtml(html, mcVersion);
     }
 
