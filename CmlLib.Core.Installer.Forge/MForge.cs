@@ -125,10 +125,17 @@ public class MForge
     private string getJavaPath(MVersion version)
     {
         var javaPath = _launcher.GetJavaPath(version);
+
+
         if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
             javaPath = _launcher.GetDefaultJavaPath();
         if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
             throw new InvalidOperationException("Cannot find any java binary. Set java binary path");
+
+
+        if (File.Exists("/proc/self/cgroup"))
+            javaPath = javaPath.Replace("w.exe", string.Empty);
+
         return javaPath;
     }
 }
