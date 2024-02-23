@@ -1,7 +1,5 @@
-﻿using CmlLib.Core.Downloader;
-using CmlLib.Core.Installer.Forge.Versions;
+﻿using CmlLib.Core.Installer.Forge.Versions;
 using CmlLib.Utils;
-using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json.Linq;
 
 namespace CmlLib.Core.Installer.Forge.Installers;
@@ -9,7 +7,7 @@ namespace CmlLib.Core.Installer.Forge.Installers;
 /* 1.7.10 - 1.11.2 */
 public class FLegacy : ForgeInstaller
 {
-    public FLegacy(string versionName, ForgeVersion forgeVersion) : 
+    public FLegacy(string versionName, ForgeVersion forgeVersion) :
         base(versionName, forgeVersion)
     {
     }
@@ -18,8 +16,8 @@ public class FLegacy : ForgeInstaller
     {
         var installProfile = await ReadInstallerProfile(installerDir);
 
-        var version = (installProfile["versionInfo"] as JObject) ?? 
-            throw new InvalidOperationException("no versionInfo property");
+        var version = installProfile["versionInfo"] as JObject ??
+                      throw new InvalidOperationException("no versionInfo property");
 
         var versionId = version?["id"]?.ToString();
         if (string.IsNullOrEmpty(versionId))
@@ -64,6 +62,6 @@ public class FLegacy : ForgeInstaller
     {
         var jsonPath = InstallOptions.MinecraftPath.GetVersionJsonPath(VersionName);
         IOUtil.CreateDirectoryForFile(jsonPath);
-        await IOUtil.WriteFileAsync(jsonPath, versionContent); 
+        await IOUtil.WriteFileAsync(jsonPath, versionContent);
     }
 }
