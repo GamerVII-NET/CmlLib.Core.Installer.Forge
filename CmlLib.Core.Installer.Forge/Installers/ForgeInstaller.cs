@@ -94,7 +94,7 @@ public abstract class ForgeInstaller : IForgeInstaller
         var lostLibrary = libraryChecker.CheckFiles(
             InstallOptions.MinecraftPath, libs.ToArray(), _fileProgress);
 
-        if (lostLibrary != null)
+        if (lostLibrary != null && lostLibrary.Any())
             await InstallOptions.Downloader.DownloadFiles(lostLibrary, _fileProgress, _bytesPrgress);
     }
 
@@ -235,7 +235,7 @@ public abstract class ForgeInstaller : IForgeInstaller
             $"-cp {IOUtil.CombinePath(classpath)} " +
             $"{mainClass}";
 
-        if (args != null && args.Length > 0)
+        if (args is { Length: > 0 })
             arg += " " + string.Join(" ", args);
 
         var process = new Process();
@@ -246,7 +246,11 @@ public abstract class ForgeInstaller : IForgeInstaller
         };
 
         var p = new ProcessUtil(process);
-        p.OutputReceived += (s, e) => InstallerOutput?.Invoke(this, e);
+
+        p.OutputReceived += (s, e) =>
+        {
+            InstallerOutput?.Invoke(this, e);
+        };
         p.StartWithEvents();
         await p.WaitForExitTaskAsync();
     }

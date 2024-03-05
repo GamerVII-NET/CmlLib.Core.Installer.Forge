@@ -17,10 +17,9 @@ public class MForge
 
     public MForge(CMLauncher launcher)
     {
-        
         var clientHandler = new HttpClientHandler();
         clientHandler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
-        
+
         _launcher = launcher;
         _installerMapper = new ForgeInstallerVersionMapper();
         _versionLoader = new ForgeVersionLoader(new HttpClient(clientHandler));
@@ -53,7 +52,7 @@ public class MForge
         var versions = await _versionLoader.GetForgeVersions(minecraftVersion);
 
         ForgeVersion bestVersion = null;
-        if (mcVersion.Contains("-"))
+        if (mcVersion.Contains("-") && mcVersion.Contains("-forge-"))
             bestVersion = versions.First(c => c.ForgeVersionName == mcVersion.Split("-forge-").Last());
         else
             bestVersion =
@@ -141,5 +140,30 @@ public class MForge
             javaPath = javaPath.Replace("w.exe", string.Empty);
 
         return javaPath;
+    }
+
+    public Task<string> Install(string mcVersion, bool forceUpdate, OsType osType, string osArch)
+    {
+        if (osType != OsType.Undefined)
+        {
+            switch (osType)
+            {
+                case OsType.Linux:
+                    MRule.OSName = MRule.Linux;
+                    break;
+                case OsType.OsX:
+                    MRule.OSName = MRule.OSX;
+                    break;
+                case OsType.Windows:
+                    MRule.OSName = MRule.Windows;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        MRule.Arch = osArch;
+
+        return Install(mcVersion, createDefaultOptions(), forceUpdate);
     }
 }
