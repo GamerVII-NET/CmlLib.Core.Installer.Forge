@@ -123,12 +123,15 @@ public class MForge
         {
             return false;
         }
+        catch (DirectoryNotFoundException exception)
+        {
+            return false;
+        }
     }
 
     private string getJavaPath(MVersion version)
     {
         var javaPath = _launcher.GetJavaPath(version);
-
 
         if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
             javaPath = _launcher.GetDefaultJavaPath();
