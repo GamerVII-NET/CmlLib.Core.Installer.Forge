@@ -148,7 +148,6 @@ public class MForge
     public Task<string> Install(string mcVersion, bool forceUpdate, OsType osType, string osArch)
     {
         if (osType != OsType.Undefined)
-        {
             switch (osType)
             {
                 case OsType.Linux:
@@ -163,7 +162,6 @@ public class MForge
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
 
         MRule.Arch = osArch;
 
