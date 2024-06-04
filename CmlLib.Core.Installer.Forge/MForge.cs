@@ -14,6 +14,7 @@ public class MForge
 
     private readonly CMLauncher _launcher;
     private readonly ForgeVersionLoader _versionLoader;
+    public ForgeVersionLoader VersionLoader => _versionLoader;
 
     public MForge(CMLauncher launcher)
     {
